@@ -25,7 +25,6 @@ import {
   solution,
   findFirstUnusedReveal,
   unicodeLength,
-  getIndex,
 } from './lib/words'
 import { addStatsForCompletedGame, loadStats } from './lib/stats'
 import {
@@ -261,23 +260,6 @@ function App() {
         setIsSettingsModalOpen={setIsSettingsModalOpen}
       />
       <div className="px-1 md:max-w-7xl w-full mx-auto sm:px-6 lg:px-8 flex flex-col">
-        <div
-          className="flex justify-center mb-2"
-          style={{
-            fontSize:
-              40 * Math.sqrt(1 / (Math.abs(getIndex(new Date()) - 395) + 1)),
-          }}
-        >
-          (
-          <a
-            href="https://words.hk/static/bopomofo-wordle/index2.html"
-            className="underline"
-            style={{ color: '#88A' }}
-          >
-            舊版本按此
-          </a>
-          )
-        </div>
         <div className="pb-6">
           <Grid
             solution={solution}
