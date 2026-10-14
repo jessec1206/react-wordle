@@ -1,4 +1,6 @@
-const gameStateKey = 'gameState'
+import { gameKey } from './words'
+
+const gameStateKey = `gameState:v2:${gameKey}`
 const highContrastKey = 'highContrast'
 
 export type StoredGameState = {

@@ -1,7 +1,7 @@
 import { getGuessStatuses } from './statuses'
-import { solutionIndex, unicodeSplit } from './words'
+import { selectedGame, gameUrl, unicodeSplit } from './words'
 import { GAME_TITLE } from '../constants/strings'
-import { MAX_CHALLENGES, SITE_URL } from '../constants/settings'
+import { MAX_CHALLENGES } from '../constants/settings'
 import { UAParser } from 'ua-parser-js'
 
 const webShareApiDeviceTypes: string[] = ['mobile', 'smarttv', 'wearable']
@@ -19,14 +19,16 @@ export const shareStatus = (
   handleShareToClipboard: () => void
 ) => {
   const textToShare =
-    `${GAME_TITLE} ${solutionIndex} ${
+    `${GAME_TITLE} ${selectedGame.dateString} 第${selectedGame.puzzle}題 ${
       lost ? 'X' : guesses.length
     }/${MAX_CHALLENGES}${isHardMode ? '*' : ''}\n\n` +
     generateEmojiGrid(
       solution,
       guesses,
       getEmojiTiles(isDarkMode, isHighContrastMode)
-    ) + '\n遊戲連結：' + SITE_URL
+    ) +
+    '\n遊戲連結：' +
+    gameUrl(selectedGame.dateString, selectedGame.puzzle)
 
   const shareData = { text: textToShare }
 

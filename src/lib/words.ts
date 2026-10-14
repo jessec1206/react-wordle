@@ -132,4 +132,52 @@ export const getSolution = (today: Date) => {
   }
 }
 
-export const { solution, solutionIndex, tomorrow } = getSolution(getToday())
+export const formatGameDate = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    '0'
+  )}-${String(date.getDate()).padStart(2, '0')}`
+
+export const resolveGameSelection = (search: string, today = getToday()) => {
+  const params = new URLSearchParams(search)
+  const value = params.get('date') || ''
+  const candidate = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00`)
+    : today
+  const date =
+    !isNaN(candidate.valueOf()) &&
+    (!value || formatGameDate(candidate) === value) &&
+    candidate >= firstGameDate &&
+    candidate <= today
+      ? candidate
+      : today
+  const requestedPuzzle = Number(params.get('puzzle') || 1)
+  const puzzle = [1, 2, 3].includes(requestedPuzzle) ? requestedPuzzle : 1
+  return { date, dateString: formatGameDate(date), puzzle }
+}
+
+// A fixed, deduplicated deck gives every date three different answers.
+const dailyWords = Array.from(new Set(WORDS))
+export const getDailySolution = (date: Date, puzzle: number) => {
+  const index = (getIndex(date) - INDEX_OFFSET) * 3 + INDEX_OFFSET + puzzle - 1
+  return {
+    solution: localeAwareUpperCase(dailyWords[index % dailyWords.length]),
+    solutionIndex: index,
+    tomorrow: getNextGameDate(getToday()).valueOf(),
+  }
+}
+
+export const selectedGame = resolveGameSelection(window.location.search)
+export const gameKey = `${selectedGame.dateString}:${selectedGame.puzzle}`
+export const { solution, solutionIndex, tomorrow } = getDailySolution(
+  selectedGame.date,
+  selectedGame.puzzle
+)
+
+export const gameUrl = (date: string, puzzle: number) => {
+  const url = new URL(window.location.href)
+  url.searchParams.set('date', date)
+  url.searchParams.set('puzzle', String(puzzle))
+  url.hash = ''
+  return url.href
+}

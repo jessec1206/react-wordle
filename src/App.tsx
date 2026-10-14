@@ -40,6 +40,7 @@ import { AlertContainer } from './components/alerts/AlertContainer'
 import { useAlert } from './context/AlertContext'
 import { Navbar } from './components/navbar/Navbar'
 import { isInAppBrowser } from './lib/browser'
+import { GamePicker } from './components/GamePicker'
 import { MigrateStatsModal } from './components/modals/MigrateStatsModal'
 
 function App() {
@@ -98,11 +99,12 @@ function App() {
     // if no game state on load,
     // show the user the how-to info modal
     if (!loadGameStateFromLocalStorage()) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsInfoModalOpen(true)
       }, WELCOME_INFO_MODAL_MS)
+      return () => clearTimeout(timer)
     }
-  })
+  }, [])
 
   useEffect(() => {
     DISCOURAGE_INAPP_BROWSERS &&
@@ -190,7 +192,7 @@ function App() {
   }
 
   const onEnter = () => {
-    if (isGameWon || isGameLost) {
+    if (isGameWon || isGameLost || isRevealing) {
       return
     }
 
@@ -259,6 +261,7 @@ function App() {
         setIsStatsModalOpen={setIsStatsModalOpen}
         setIsSettingsModalOpen={setIsSettingsModalOpen}
       />
+      <GamePicker guesses={guesses} />
       <div className="px-1 md:max-w-7xl w-full mx-auto sm:px-6 lg:px-8 flex flex-col">
         <div className="pb-6">
           <Grid
