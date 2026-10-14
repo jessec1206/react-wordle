@@ -7,8 +7,11 @@ import {
   solution,
 } from '../lib/words'
 
+import { getRepeatedSoundHint } from '../lib/repeatedSounds'
+
 export const GamePicker = ({ guesses }: { guesses: string[] }) => {
   const today = formatGameDate(getToday())
+  const repeatedSoundHint = getRepeatedSoundHint(solution)
   const isHistory = selectedGame.dateString !== today
   return (
     <section
@@ -72,6 +75,11 @@ export const GamePicker = ({ guesses }: { guesses: string[] }) => {
           )
         })}
       </nav>
+      {repeatedSoundHint && (
+        <p className="mt-3 text-center text-sm font-medium text-indigo-700 dark:text-indigo-300">
+          提示：{repeatedSoundHint}
+        </p>
+      )}
       <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-300">
         每天三題，進度各自保存；歷史日期也有三題可玩。
       </p>
