@@ -3,14 +3,13 @@ import { ShareIcon } from '@heroicons/react/outline'
 import { StatBar } from '../stats/StatBar'
 import { Histogram } from '../stats/Histogram'
 import { GameStats } from '../../lib/localStorage'
-import { shareStatus } from '../../lib/share'
+import { shareDailyStatus, shareStatus } from '../../lib/share'
 import { tomorrow } from '../../lib/words'
 import { BaseModal } from './BaseModal'
 import {
   STATISTICS_TITLE,
   GUESS_DISTRIBUTION_TEXT,
   NEW_WORD_TEXT,
-  SHARE_TEXT,
 } from '../../constants/strings'
 import { MigrationIntro } from '../stats/MigrationIntro'
 import { ENABLE_MIGRATE_STATS } from '../../constants/settings'
@@ -46,20 +45,6 @@ export const StatsModal = ({
   isHighContrastMode,
   numberOfGuessesMade,
 }: Props) => {
-  if (gameStats.totalGames <= 0) {
-    return (
-      <BaseModal
-        title={STATISTICS_TITLE}
-        isOpen={isOpen}
-        handleClose={handleClose}
-      >
-        <StatBar gameStats={gameStats} />
-        {ENABLE_MIGRATE_STATS && (
-          <MigrationIntro handleMigrateStatsButton={handleMigrateStatsButton} />
-        )}
-      </BaseModal>
-    )
-  }
   return (
     <BaseModal
       title={STATISTICS_TITLE}
@@ -102,11 +87,26 @@ export const StatsModal = ({
               }}
             >
               <ShareIcon className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white" />
-              {SHARE_TEXT}
+              分享本題
             </button>
           </div>
         </div>
       )}
+      <button
+        type="button"
+        className="mt-4 w-full rounded-md border border-indigo-600 px-4 py-2 font-medium text-indigo-700 dark:text-indigo-300"
+        onClick={() => {
+          shareDailyStatus(
+            solution,
+            guesses,
+            isDarkMode,
+            isHighContrastMode,
+            handleShareToClipboard
+          )
+        }}
+      >
+        分享當日三題
+      </button>
       {ENABLE_MIGRATE_STATS && (
         <div>
           <hr className="mt-4 -mb-4 border-gray-500" />
