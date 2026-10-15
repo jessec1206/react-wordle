@@ -96,14 +96,20 @@ function App() {
   )
 
   useEffect(() => {
-    // if no game state on load,
-    // show the user the how-to info modal
-    if (!loadGameStateFromLocalStorage()) {
-      const timer = setTimeout(() => {
-        setIsInfoModalOpen(true)
-      }, WELCOME_INFO_MODAL_MS)
-      return () => clearTimeout(timer)
+    // Remember the welcome tutorial across every date and puzzle.
+    if (localStorage.getItem('hasSeenWelcomeInfo') === '1') return
+    const hasExistingGame = Object.keys(localStorage).some(
+      (key) => key === 'gameState' || key.startsWith('gameState:v2:')
+    )
+    if (hasExistingGame) {
+      localStorage.setItem('hasSeenWelcomeInfo', '1')
+      return
     }
+    const timer = setTimeout(() => {
+      localStorage.setItem('hasSeenWelcomeInfo', '1')
+      setIsInfoModalOpen(true)
+    }, WELCOME_INFO_MODAL_MS)
+    return () => clearTimeout(timer)
   }, [])
 
   useEffect(() => {
