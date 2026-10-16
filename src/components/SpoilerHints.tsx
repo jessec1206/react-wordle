@@ -33,11 +33,16 @@ export const SpoilerHints = ({ solution, hints, onReveal }: Props) => {
             onClick={() => onReveal(key)}
             className={
               hints[key]
-                ? 'px-3 py-1 font-mono font-bold'
-                : 'rounded bg-gray-800 px-3 py-1 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-200 dark:text-gray-900'
+                ? 'h-7 w-16 font-mono font-bold'
+                : 'h-7 w-16 rounded hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+            }
+            style={
+              hints[key]
+                ? undefined
+                : { backgroundColor: 'var(--absent-cell-bg-color)' }
             }
           >
-            {hints[key] ? value : '點擊揭曉'}
+            {hints[key] ? value : null}
           </button>
         </div>
       ))}
