@@ -77,7 +77,7 @@ export const GamePicker = ({ guesses }: { guesses: string[] }) => {
       </nav>
       {repeatedSoundHint && (
         <p className="mt-3 text-center text-sm font-medium text-indigo-700 dark:text-indigo-300">
-          提示：{repeatedSoundHint}
+          {repeatedSoundHint}
         </p>
       )}
       <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-300">
