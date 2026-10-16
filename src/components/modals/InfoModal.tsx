@@ -12,6 +12,7 @@ export const InfoModal = ({ isOpen, handleClose }: Props) => {
       <p className="mb-4 text-sm text-gray-500 dark:text-gray-300">
         每天有三題，每題最多猜六次。上方可切換第 1／2／3 題，或選擇歷史日期。
         每題進度會保存在這個瀏覽器；統計包含今日與歷史題目的完成結果。
+        字數與組合提示預設隱藏，點擊才揭曉；分享會逐題標示開啟過的選用提示。
       </p>
       <p className="text-sm text-gray-500 dark:text-gray-300">
         這是<b>新</b>的注音版

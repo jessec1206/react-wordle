@@ -71,8 +71,16 @@ test('progress is isolated across slots and dates, and restored on return', () =
     })
     return storage!
   }
-  const first = { guesses: ['ㄕㄚㄏㄞㄗ'], solution: 'first' }
-  const second = { guesses: ['ㄓㄢㄍㄨㄥ'], solution: 'second' }
+  const first = {
+    guesses: ['ㄕㄚㄏㄞㄗ'],
+    solution: 'first',
+    hints: { wordCount: true, grouping: false },
+  }
+  const second = {
+    guesses: ['ㄓㄢㄍㄨㄥ'],
+    solution: 'second',
+    hints: { wordCount: false, grouping: true },
+  }
   open('?date=2024-02-29&puzzle=1').saveGameStateToLocalStorage(first)
   expect(
     open('?date=2024-02-29&puzzle=2').loadGameStateFromLocalStorage()

@@ -28,6 +28,7 @@ import {
 } from './lib/words'
 import { addStatsForCompletedGame, loadStats } from './lib/stats'
 import {
+  GameHints,
   loadGameStateFromLocalStorage,
   saveGameStateToLocalStorage,
   setStoredIsHighContrastMode,
@@ -41,6 +42,7 @@ import { useAlert } from './context/AlertContext'
 import { Navbar } from './components/navbar/Navbar'
 import { isInAppBrowser } from './lib/browser'
 import { GamePicker } from './components/GamePicker'
+import { SpoilerHints } from './components/SpoilerHints'
 import { MigrateStatsModal } from './components/modals/MigrateStatsModal'
 
 function App() {
@@ -85,6 +87,15 @@ function App() {
       })
     }
     return loaded.guesses
+  })
+
+  const [hints, setHints] = useState<GameHints>(() => {
+    const saved = loadGameStateFromLocalStorage()
+    return {
+      wordCount:
+        saved?.solution === solution && saved.hints?.wordCount === true,
+      grouping: saved?.solution === solution && saved.hints?.grouping === true,
+    }
   })
 
   const [stats, setStats] = useState(() => loadStats())
@@ -159,8 +170,8 @@ function App() {
   }
 
   useEffect(() => {
-    saveGameStateToLocalStorage({ guesses, solution })
-  }, [guesses])
+    saveGameStateToLocalStorage({ guesses, solution, hints })
+  }, [guesses, hints])
 
   useEffect(() => {
     if (isGameWon) {
@@ -268,6 +279,13 @@ function App() {
         setIsSettingsModalOpen={setIsSettingsModalOpen}
       />
       <GamePicker guesses={guesses} />
+      <SpoilerHints
+        solution={solution}
+        hints={hints}
+        onReveal={(hint) =>
+          setHints((previous) => ({ ...previous, [hint]: true }))
+        }
+      />
       <div className="px-1 md:max-w-7xl w-full mx-auto sm:px-6 lg:px-8 flex flex-col">
         <div className="pb-6">
           <Grid
@@ -296,6 +314,7 @@ function App() {
           solution={solution}
           guesses={guesses}
           gameStats={stats}
+          hints={hints}
           isGameLost={isGameLost}
           isGameWon={isGameWon}
           handleShareToClipboard={() => showSuccessAlert(GAME_COPIED_MESSAGE)}
@@ -303,7 +322,6 @@ function App() {
             setIsStatsModalOpen(false)
             setIsMigrateStatsModalOpen(true)
           }}
-          isHardMode={isHardMode}
           isDarkMode={isDarkMode}
           isHighContrastMode={isHighContrastMode}
           numberOfGuessesMade={guesses.length}

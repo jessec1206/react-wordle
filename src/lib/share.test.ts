@@ -92,3 +92,29 @@ describe('daily sharing', () => {
     expect(copied).toHaveBeenCalledTimes(1)
   })
 })
+
+test('reports both hint types independently, including an unfinished puzzle', () => {
+  const text = generateDailyShareText(
+    '2026-10-16',
+    [
+      {
+        solution: 'ABCDE',
+        guesses: ['ABCDE'],
+        hints: { wordCount: true, grouping: true },
+      },
+      {
+        solution: 'FGHIJ',
+        guesses: [],
+        hints: { wordCount: false, grouping: true },
+      },
+      null,
+    ],
+    false,
+    false
+  )
+  expect(text).toContain('選用提示：字數提示、組合提示')
+  expect(text).toContain('第2題 ⏳ 未完成\n選用提示：組合提示')
+  expect(text).toContain('第3題 ⏳ 未完成\n選用提示：未開啟')
+  expect(text).not.toContain('ABCDE')
+  expect(text).not.toContain('FGHIJ')
+})

@@ -1,6 +1,6 @@
 import { getGuessStatuses } from './statuses'
 import { selectedGame, gameUrl, unicodeSplit, getDailySolution } from './words'
-import { StoredGameState } from './localStorage'
+import { GameHints, StoredGameState } from './localStorage'
 import { GAME_TITLE } from '../constants/strings'
 import { MAX_CHALLENGES } from '../constants/settings'
 import { UAParser } from 'ua-parser-js'
@@ -9,30 +9,6 @@ const webShareApiDeviceTypes: string[] = ['mobile', 'smarttv', 'wearable']
 const parser = new UAParser()
 const browser = parser.getBrowser()
 const device = parser.getDevice()
-
-export const shareStatus = (
-  solution: string,
-  guesses: string[],
-  lost: boolean,
-  isHardMode: boolean,
-  isDarkMode: boolean,
-  isHighContrastMode: boolean,
-  handleShareToClipboard: () => void
-) => {
-  const textToShare =
-    `${GAME_TITLE} ${selectedGame.dateString} 第${selectedGame.puzzle}題 ${
-      lost ? 'X' : guesses.length
-    }/${MAX_CHALLENGES}${isHardMode ? '*' : ''}\n\n` +
-    generateEmojiGrid(
-      solution,
-      guesses,
-      getEmojiTiles(isDarkMode, isHighContrastMode)
-    ) +
-    '\n遊戲連結：' +
-    gameUrl(selectedGame.dateString, selectedGame.puzzle)
-
-  return shareText(textToShare, handleShareToClipboard)
-}
 
 const shareText = async (text: string, onCopied: () => void) => {
   const shareData = { text }
@@ -62,11 +38,22 @@ export const generateDailyShareText = (
     const won = winIndex >= 0
     const lost = !won && (game?.guesses.length || 0) >= MAX_CHALLENGES
     const title = `第${index + 1}題`
-    if (!game || (!won && !lost)) return `${title} ⏳ 未完成`
+    const openedHints = [
+      game?.hints?.wordCount === true ? '字數提示' : '',
+      game?.hints?.grouping === true ? '組合提示' : '',
+    ].filter(Boolean)
+    const hintLine = `選用提示：${
+      openedHints.length ? openedHints.join('、') : '未開啟'
+    }`
+    if (!game || (!won && !lost)) return `${title} ⏳ 未完成\n${hintLine}`
     const guesses = game.guesses.slice(0, won ? winIndex + 1 : MAX_CHALLENGES)
     return `${title} ${
       won ? `✅ ${guesses.length}` : '❌ X'
-    }/${MAX_CHALLENGES}\n${generateEmojiGrid(game.solution, guesses, tiles)}`
+    }/${MAX_CHALLENGES}\n${generateEmojiGrid(
+      game.solution,
+      guesses,
+      tiles
+    )}\n${hintLine}`
   })
   const url = new URL(gameUrl(date, 1))
   url.searchParams.delete('puzzle')
@@ -78,10 +65,11 @@ export const shareDailyStatus = (
   guesses: string[],
   isDarkMode: boolean,
   isHighContrastMode: boolean,
-  onCopied: () => void
+  onCopied: () => void,
+  hints?: GameHints
 ) => {
   const games = [1, 2, 3].map((puzzle): StoredGameState | null => {
-    if (puzzle === selectedGame.puzzle) return { solution, guesses }
+    if (puzzle === selectedGame.puzzle) return { solution, guesses, hints }
     try {
       const raw = localStorage.getItem(
         `gameState:v2:${selectedGame.dateString}:${puzzle}`

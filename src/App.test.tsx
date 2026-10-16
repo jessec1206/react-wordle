@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import App from './App'
 import { GAME_TITLE } from './constants/strings'
 
@@ -53,4 +53,21 @@ test('existing players do not see the welcome tutorial after upgrading', async (
   await new Promise((resolve) => setTimeout(resolve, 500))
   expect(screen.queryByText('遊戲說明')).not.toBeInTheDocument()
   expect(localStorage.getItem('hasSeenWelcomeInfo')).toBe('1')
+})
+
+test('revealed hints are saved and restored without opening the other hint', () => {
+  localStorage.clear()
+  localStorage.setItem('hasSeenWelcomeInfo', '1')
+  const first = render(<App />)
+  fireEvent.click(screen.getByRole('button', { name: '開啟字數提示' }))
+  expect(screen.getByRole('button', { name: /字數提示：/ })).toBeDisabled()
+  expect(
+    screen.getByRole('button', { name: '開啟組合提示' })
+  ).toBeInTheDocument()
+  first.unmount()
+  render(<App />)
+  expect(screen.getByRole('button', { name: /字數提示：/ })).toBeDisabled()
+  expect(
+    screen.getByRole('button', { name: '開啟組合提示' })
+  ).toBeInTheDocument()
 })

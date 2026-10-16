@@ -2,8 +2,8 @@ import Countdown from 'react-countdown'
 import { ShareIcon } from '@heroicons/react/outline'
 import { StatBar } from '../stats/StatBar'
 import { Histogram } from '../stats/Histogram'
-import { GameStats } from '../../lib/localStorage'
-import { shareDailyStatus, shareStatus } from '../../lib/share'
+import { GameHints, GameStats } from '../../lib/localStorage'
+import { shareDailyStatus } from '../../lib/share'
 import { tomorrow } from '../../lib/words'
 import { BaseModal } from './BaseModal'
 import {
@@ -20,11 +20,11 @@ type Props = {
   solution: string
   guesses: string[]
   gameStats: GameStats
+  hints: GameHints
   isGameLost: boolean
   isGameWon: boolean
   handleShareToClipboard: () => void
   handleMigrateStatsButton: () => void
-  isHardMode: boolean
   isDarkMode: boolean
   isHighContrastMode: boolean
   numberOfGuessesMade: number
@@ -36,11 +36,11 @@ export const StatsModal = ({
   solution,
   guesses,
   gameStats,
+  hints,
   isGameLost,
   isGameWon,
   handleShareToClipboard,
   handleMigrateStatsButton,
-  isHardMode,
   isDarkMode,
   isHighContrastMode,
   numberOfGuessesMade,
@@ -61,7 +61,7 @@ export const StatsModal = ({
         numberOfGuessesMade={numberOfGuessesMade}
       />
       {(isGameLost || isGameWon) && (
-        <div className="mt-5 sm:mt-6 columns-2 dark:text-white">
+        <div className="mt-5 sm:mt-6 text-center dark:text-white">
           <div>
             <h5>{NEW_WORD_TEXT}（每日三題）</h5>
             <Countdown
@@ -70,41 +70,23 @@ export const StatsModal = ({
               daysInHours={true}
             />
           </div>
-          <div>
-            <button
-              type="button"
-              className="inline-flex justify-center items-center text-center mt-2 w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-              onClick={() => {
-                shareStatus(
-                  solution,
-                  guesses,
-                  isGameLost,
-                  isHardMode,
-                  isDarkMode,
-                  isHighContrastMode,
-                  handleShareToClipboard
-                )
-              }}
-            >
-              <ShareIcon className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white" />
-              分享本題
-            </button>
-          </div>
         </div>
       )}
       <button
         type="button"
-        className="mt-4 w-full rounded-md border border-indigo-600 px-4 py-2 font-medium text-indigo-700 dark:text-indigo-300"
+        className="mt-4 inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => {
           shareDailyStatus(
             solution,
             guesses,
             isDarkMode,
             isHighContrastMode,
-            handleShareToClipboard
+            handleShareToClipboard,
+            hints
           )
         }}
       >
+        <ShareIcon className="mr-2 h-5 w-5" aria-hidden="true" />
         分享當日三題
       </button>
       {ENABLE_MIGRATE_STATS && (

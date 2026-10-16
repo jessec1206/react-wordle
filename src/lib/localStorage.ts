@@ -3,9 +3,15 @@ import { gameKey } from './words'
 const gameStateKey = `gameState:v2:${gameKey}`
 const highContrastKey = 'highContrast'
 
+export type GameHints = {
+  wordCount: boolean
+  grouping: boolean
+}
+
 export type StoredGameState = {
   guesses: string[]
   solution: string
+  hints?: GameHints
 }
 
 export const saveGameStateToLocalStorage = (gameState: StoredGameState) => {
