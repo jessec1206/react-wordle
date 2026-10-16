@@ -4,6 +4,7 @@ import { CharStatus } from '../../lib/statuses'
 import { REVEAL_TIME_MS } from '../../constants/settings'
 import { getStoredIsHighContrastMode } from '../../lib/localStorage'
 import { solution } from '../../lib/words'
+import { getKeyboardGroup } from '../../lib/keyboardGroups'
 
 type Props = {
   children?: ReactNode
@@ -26,17 +27,17 @@ export const Key = ({
   const isHighContrast = getStoredIsHighContrastMode()
 
   if (value[0] === ' ') {
-  return (
-    <span style={{width:width}}></span>
-  )
+    return <span style={{ width: width }}></span>
   }
 
+  const group = getKeyboardGroup(value)
   const classes = classnames(
     'flex items-center justify-center rounded mx-0.5 text-xs font-bold cursor-pointer select-none dark:text-white',
+    !status && group?.classes,
     {
       'transition ease-in-out': isRevealing,
       'bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 active:bg-slate-400':
-        !status,
+        !status && !group,
       'bg-slate-400 dark:bg-slate-800 text-white': status === 'absent',
       'bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white':
         status === 'correct' && isHighContrast,

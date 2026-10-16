@@ -1,5 +1,6 @@
 import { getStatuses } from '../../lib/statuses'
 import { Key } from './Key'
+import { KEYBOARD_GROUPS } from '../../lib/keyboardGroups'
 import { useEffect } from 'react'
 import { ENTER_TEXT } from '../../constants/strings'
 import { localeAwareUpperCase } from '../../lib/words'
@@ -62,6 +63,20 @@ export const Keyboard = ({
 
   return (
     <div>
+      <div
+        aria-label="鍵盤分類色標"
+        className="mb-3 flex justify-center gap-5 text-xs text-gray-600 dark:text-gray-300"
+      >
+        {KEYBOARD_GROUPS.map((group) => (
+          <span key={group.name} className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden="true"
+              className={`h-3 w-3 rounded-sm ${group.classes}`}
+            />
+            {group.name}
+          </span>
+        ))}
+      </div>
       <div className="flex justify-center mb-1">
         {['ㄅ', 'ㄉ', ' 1', ' 2', 'ㄓ', ' 3', ' 4', 'ㄚ', 'ㄞ', 'ㄢ', 'ㄦ'].map(
           (key) => (
